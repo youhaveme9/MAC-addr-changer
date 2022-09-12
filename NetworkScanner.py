@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import scapy.all as scapy
+import optparse
 
 
 def scan(ip):
@@ -26,7 +27,15 @@ def print_result(result):
         print(data["ip"] + "\t" + data["mac"])
 
 
-datas = scan("192.168.66.1/24")
+def get_input():
+    parser = optparse.OptionParser()
+    parser.add_option("-t", "--target", dest="target", help="Specify IP or IP range")
+    (opt, args) = parser.parse_args()
+    if not opt.target:
+        parser.error("[-] Please specify an target, use --help for more info")
+    return opt
+
+
+ip_target = get_input()
+datas = scan(ip_target.target)
 print_result(datas)
-
-
