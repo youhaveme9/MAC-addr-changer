@@ -3,6 +3,7 @@
 import subprocess
 import optparse
 import re
+import NetworkScanner as ns
 
 
 # subprocess.call('ifconfig', shell=True)
@@ -10,8 +11,11 @@ def get_input():
     parser = optparse.OptionParser()
     parser.add_option("-i", "--interface", dest="iface", help="Interface name to change its MAC address")
     parser.add_option("-m", "--mac", dest="mac_addr", help="New MAC address")
+    parser.add_option("-s", "--show", dest="ip", help="Show devices connected to same network")
     (opt, args) = parser.parse_args()
-    if not opt.iface:
+    if opt.ip:
+        return opt
+    elif not opt.iface:
         parser.error("[-] Please specify an interface, use --help for more info")
     elif not opt.mac_addr:
         parser.error("[-] Please specify a mac address, use --help for more info")
@@ -35,12 +39,16 @@ def get_mac(interface):
 
 
 opt = get_input()
-
-current_mac = get_mac(opt.iface)
-print(f"Current MAC = {current_mac}")
-change_mac(opt.iface, opt.mac_addr)
-final_mac = get_mac(opt.iface)
-if final_mac == opt.mac_addr:
-    print(f"[+] Mac address changed successfully to {opt.mac_addr}")
+if opt.ip:
+    data = ns.scan(opt.ip)
+    ns.print_result(data)
 else:
-    print("[-] Mac address did not changed")
+
+    current_mac = get_mac(opt.iface)
+    print(f"Current MAC = {current_mac}")
+    change_mac(opt.iface, opt.mac_addr)
+    final_mac = get_mac(opt.iface)
+    if final_mac == opt.mac_addr:
+        print(f"[+] Mac address changed successfully to {opt.mac_addr}")
+    else:
+        print("[-] Mac address did not changed")

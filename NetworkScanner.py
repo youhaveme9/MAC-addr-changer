@@ -36,6 +36,7 @@ def get_input():
     return opt
 
 
-ip_target = get_input()
-datas = scan(ip_target.target)
-print_result(datas)
+if __name__ == '__main__':
+    ip_target = get_input()
+    datas = scan(ip_target.target)
+    print_result(datas)
